@@ -1,5 +1,5 @@
 export 'colors.dart';
-export 'dimensions.dart';
+export 'global_variables.dart';
 export 'firebase_info.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
