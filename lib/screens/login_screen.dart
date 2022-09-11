@@ -122,9 +122,8 @@ class _LoginScreenState extends State<LoginScreen> {
     if (res == 'Success') {
       navigateToContent();
     } else {
-      if (mounted) {
-        showSnackBar(context, res);
-      }
+      if (!mounted) return;
+      showSnackBar(context, res);
     }
   }
 

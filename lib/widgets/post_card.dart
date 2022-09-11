@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:instagram_clone/models/post.dart';
 import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
+import 'package:instagram_clone/resources/firestore_methods.dart';
+import 'package:instagram_clone/screens/comments_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
@@ -103,7 +105,9 @@ class _PostCardState extends State<PostCard> {
             ),
           ),
           GestureDetector(
-            onDoubleTap: () {
+            onDoubleTap: () async {
+              await FirestoreMethods()
+                  .likePost(post.postId, user.uid, post.likes);
               setState(() {
                 isLikeAnimating = true;
               });
@@ -150,19 +154,32 @@ class _PostCardState extends State<PostCard> {
                 isAnimating: post.likes.contains(user.uid),
                 smallLike: true,
                 child: IconButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    await FirestoreMethods().likePost(
+                      post.postId,
+                      user.uid,
+                      post.likes,
+                    );
                     setState(() {
                       isLikeAnimating = true;
                     });
                   },
-                  icon: const Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                  ),
+                  icon: post.likes.contains(user.uid)
+                      ? const Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                        )
+                      : const Icon(Icons.favorite_border),
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => CommentsScreen(post: post),
+                    ),
+                  );
+                },
                 icon: const Icon(
                   Icons.comment_outlined,
                 ),
@@ -202,7 +219,9 @@ class _PostCardState extends State<PostCard> {
                       .subtitle2!
                       .copyWith(fontWeight: FontWeight.w800),
                   child: Text(
-                    '${post.likes.length} likes',
+                    post.likes.length != 1
+                        ? '${post.likes.length} likes'
+                        : '1 like',
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                 ),
@@ -225,15 +244,26 @@ class _PostCardState extends State<PostCard> {
                   ),
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => CommentsScreen(post: post),
+                      ),
+                    );
+                  },
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: const Text(
-                      'View all 200 comments',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: secondaryColor,
-                      ),
+                    child: FutureBuilder(
+                      future: FirestoreMethods().getCommentNumber(post.postId),
+                      builder: (context, snapshot) {
+                        return Text(
+                          'View all ${snapshot.data} ${snapshot.data == 1 ? 'comment' : 'comments'}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: secondaryColor,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),

@@ -180,14 +180,13 @@ class _AddPostScreenState extends State<AddPostScreen> {
         profileImage,
       );
       if (res == 'Success') {
-        if (mounted) {
-          showSnackBar(context, 'Posted');
-        }
+        if (!mounted) return;
+        showSnackBar(context, 'Posted');
+
         clearImage();
       } else {
-        if (mounted) {
-          showSnackBar(context, res);
-        }
+        if (!mounted) return;
+        showSnackBar(context, res);
       }
     } catch (e) {
       showSnackBar(

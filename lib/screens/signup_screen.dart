@@ -184,9 +184,8 @@ class _SignupScreenState extends State<SignupScreen> {
     });
 
     if (res != 'Success') {
-      if (mounted) {
-        showSnackBar(context, res);
-      }
+      if (!mounted) return;
+      showSnackBar(context, res);
     } else {
       navigateToContent();
     }
