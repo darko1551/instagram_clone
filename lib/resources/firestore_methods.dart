@@ -155,13 +155,42 @@ class FirestoreMethods {
     return likes;
   }
 
-  Future<int> getCommentNumber(String postId) async {
-    int commentNumber = await _firestore
+  Stream<QuerySnapshot<Map<String, dynamic>>> getComments(String postId) {
+    final snap = _firestore
         .collection('posts')
         .doc(postId)
         .collection('comments')
-        .get()
-        .then((value) => value.size);
-    return commentNumber;
+        .snapshots();
+    return snap;
+  }
+
+  Future<String> deletePost(Post post) async {
+    String res = '';
+    try {
+      StorageMethods().removePostImage(post.postUrl);
+      await _firestore
+          .collection('posts')
+          .doc(post.postId)
+          .collection('comments')
+          .get()
+          .then(
+            (value) => value.docs.forEach(
+              (element) {
+                _firestore
+                    .collection('posts')
+                    .doc(post.postId)
+                    .collection('comments')
+                    .doc(element.id)
+                    .delete();
+              },
+            ),
+          );
+
+      await _firestore.collection('posts').doc(post.postId).delete();
+      res = 'Success';
+    } catch (e) {
+      res = 'An error ocured while deleting a post';
+    }
+    return res;
   }
 }

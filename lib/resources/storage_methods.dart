@@ -23,4 +23,13 @@ class StorageMethods {
     TaskSnapshot taskSnapshot = await task;
     return await taskSnapshot.ref.getDownloadURL();
   }
+
+  Future<void> removePostImage(String imageUrl) async {
+    try {
+      Reference reference = _storage.refFromURL(imageUrl);
+      reference.delete();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -5,7 +5,7 @@ import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_methods.dart';
 import 'package:instagram_clone/screens/comments_screen.dart';
-import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -83,7 +83,16 @@ class _PostCardState extends State<PostCard> {
                             children: ['Delete']
                                 .map(
                                   (e) => InkWell(
-                                    onTap: () {},
+                                    onTap: () async {
+                                      String res = await FirestoreMethods()
+                                          .deletePost(post);
+                                      if (res != 'Success') {
+                                        if (!mounted) return;
+                                        showSnackBar(context, res);
+                                      }
+                                      if (!mounted) return;
+                                      Navigator.of(context).pop();
+                                    },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
                                         vertical: 42,
@@ -253,16 +262,23 @@ class _PostCardState extends State<PostCard> {
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: FutureBuilder(
-                      future: FirestoreMethods().getCommentNumber(post.postId),
+                    child: StreamBuilder(
+                      stream: FirestoreMethods().getComments(post.postId),
                       builder: (context, snapshot) {
-                        return Text(
-                          'View all ${snapshot.data} ${snapshot.data == 1 ? 'comment' : 'comments'}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: secondaryColor,
-                          ),
-                        );
+                        if (snapshot.connectionState ==
+                            ConnectionState.active) {
+                          return Text(
+                            'View all ${snapshot.data!.size} ${snapshot.data!.size == 1 ? 'comment' : 'comments'}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: secondaryColor,
+                            ),
+                          );
+                        } else {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
                       },
                     ),
                   ),
