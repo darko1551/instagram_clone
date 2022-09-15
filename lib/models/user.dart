@@ -6,6 +6,7 @@ class User {
   final String email;
   final List followers;
   final List following;
+  final String bio;
   final String photoUrl;
 
   User({
@@ -14,6 +15,7 @@ class User {
     required this.email,
     required this.followers,
     required this.following,
+    required this.bio,
     required this.photoUrl,
   });
 
@@ -23,6 +25,7 @@ class User {
         'email': email,
         'followers': followers,
         'following': following,
+        'bio': bio,
         'photoUrl': photoUrl,
       };
 
@@ -33,6 +36,7 @@ class User {
       following: userMap['following'],
       photoUrl: userMap['photoUrl'],
       uid: userMap['uid'],
+      bio: userMap['bio'],
       username: userMap['username'],
     );
     return user;

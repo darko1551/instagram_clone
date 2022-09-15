@@ -48,6 +48,7 @@ class AuthMethods {
           following: [],
           photoUrl: photoUrl,
           uid: cred.user!.uid,
+          bio: bio,
           username: username,
         );
 
@@ -96,6 +97,17 @@ class AuthMethods {
           res = 'Wrong password';
           break;
       }
+    }
+    return res;
+  }
+
+  Future<String> logOut() async {
+    String res = '';
+    try {
+      await _auth.signOut();
+      res = 'Success';
+    } catch (e) {
+      res = 'An error occured';
     }
     return res;
   }

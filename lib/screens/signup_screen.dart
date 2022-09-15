@@ -35,15 +35,17 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
+      resizeToAvoidBottomInset: true,
+      body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          width: double.infinity,
+          height: MediaQuery.of(context).size.height,
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Flexible(
+                fit: FlexFit.loose,
                 child: Container(),
               ),
               SvgPicture.asset(
@@ -108,15 +110,23 @@ class _SignupScreenState extends State<SignupScreen> {
               const SizedBox(
                 height: 24,
               ),
-              TextFieldInput(
-                textEditingController: _bioController,
-                hintText: 'Enter your bio',
-                textInputType: TextInputType.text,
+              TextField(
+                controller: _bioController,
+                keyboardType: TextInputType.multiline,
+                minLines: 3,
+                maxLines: 6,
+                decoration: const InputDecoration(
+                  filled: true,
+                  border: InputBorder.none,
+                  hintText: 'Enter your bio',
+                ),
               ),
               const SizedBox(
                 height: 24,
               ),
-              Flexible(child: Container()),
+              Flexible(
+                child: Container(),
+              ),
               InkWell(
                 onTap: signUpUser,
                 child: _isLoading

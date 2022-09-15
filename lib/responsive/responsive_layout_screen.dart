@@ -40,6 +40,6 @@ class _ResponsiveLayoutState extends State<ResponsiveLayout> {
 
   void addData() async {
     UserProvider userProvider = Provider.of(context, listen: false);
-    await userProvider.refresUser();
+    await userProvider.refreshUser();
   }
 }

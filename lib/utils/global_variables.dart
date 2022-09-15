@@ -10,5 +10,5 @@ const homeScreenItems = [
   SearchScreen(),
   AddPostScreen(),
   Text('Notifications'),
-  Text('Profile'),
+  ProfileScreen(),
 ];
