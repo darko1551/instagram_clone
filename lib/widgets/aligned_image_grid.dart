@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/models/post.dart';
 import 'package:instagram_clone/resources/firestore_methods.dart';
+import 'package:instagram_clone/utils/delete_post.dart';
 
 class AlignedImageGrid extends StatefulWidget {
   const AlignedImageGrid({
@@ -60,15 +61,14 @@ class _AlignedImageGridState extends State<AlignedImageGrid> {
     if (widget.controller.position.pixels ==
             widget.controller.position.maxScrollExtent &&
         _isFetching == false) {
-      if (mounted) {
-        setState(() {
-          _isFetching = true;
-        });
-        getDocumentsFromLastLimited(otherFetches);
-        setState(() {
-          _isFetching = false;
-        });
-      }
+      if (!mounted) return;
+      setState(() {
+        _isFetching = true;
+      });
+      getDocumentsFromLastLimited(otherFetches);
+      setState(() {
+        _isFetching = false;
+      });
     }
   }
 
@@ -90,37 +90,89 @@ class _AlignedImageGridState extends State<AlignedImageGrid> {
         double dimension =
             MediaQuery.of(context).size.width * (0.98 / imagesPerRow);
         return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 2.0),
-              child: Image.network(
-                //_posts[index * 2].postUrl,
-                'https://images.unsplash.com/photo-1663125406817-932dd8c4e1b6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=871&q=80',
-                width: dimension,
-                height: dimension,
-                fit: BoxFit.cover,
+              child: GestureDetector(
+                onLongPress: () {
+                  DeletePost().deletePostDialog(
+                    context,
+                    _posts[index * 3].postId,
+                  );
+                },
+                child: Image.network(
+                  _posts[index * 3].postUrl,
+                  // 'https://images.unsplash.com/photo-1663125406817-932dd8c4e1b6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=871&q=80',
+                  width: dimension,
+                  height: dimension,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      'assets/internal_server_error.png',
+                      width: dimension,
+                      height: dimension,
+                      fit: BoxFit.cover,
+                    );
+                  },
+                ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 2.0),
-              child: Image.network(
-                //_posts[index * 2 + 1].postUrl,
-                'https://images.unsplash.com/photo-1663125406817-932dd8c4e1b6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=871&q=80',
-                width: dimension,
-                height: dimension,
-                fit: BoxFit.cover,
-              ),
+              child: _posts.length > (index * 3 + 1)
+                  ? GestureDetector(
+                      onLongPress: () {
+                        DeletePost().deletePostDialog(
+                          context,
+                          _posts[index * 3 + 1].postId,
+                        );
+                      },
+                      child: Image.network(
+                        _posts[index * 3 + 1].postUrl,
+                        // 'https://images.unsplash.com/photo-1663125406817-932dd8c4e1b6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=871&q=80',
+                        width: dimension,
+                        height: dimension,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/internal_server_error.png',
+                            width: dimension,
+                            height: dimension,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      ),
+                    )
+                  : Container(),
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 2.0),
-              child: Image.network(
-                //_posts[index*2+2].postUrl,
-                'https://images.unsplash.com/photo-1663125406817-932dd8c4e1b6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=871&q=80',
-                width: dimension,
-                height: dimension,
-                fit: BoxFit.cover,
-              ),
+              child: _posts.length > (index * 3 + 2)
+                  ? GestureDetector(
+                      onLongPress: () {
+                        DeletePost().deletePostDialog(
+                          context,
+                          _posts[index * 3 + 2].postId,
+                        );
+                      },
+                      child: Image.network(
+                        _posts[index * 3 + 2].postUrl,
+                        //'https://images.unsplash.com/photo-1663125406817-932dd8c4e1b6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=871&q=80',
+                        width: dimension,
+                        height: dimension,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/internal_server_error.png',
+                            width: dimension,
+                            height: dimension,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      ),
+                    )
+                  : Container(),
             ),
           ],
         );

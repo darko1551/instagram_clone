@@ -207,21 +207,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 children: [
                                   Button(
                                     function: () async {
-                                      await FirestoreMethods().startFollowing(
+                                      String res = await FirestoreMethods()
+                                          .startStopFollowing(
                                         snapshot.data!.uid,
                                         Provider.of<UserProvider>(
                                           context,
                                           listen: false,
                                         ).getUser.uid,
+                                      )
+                                          .timeout(
+                                        const Duration(seconds: 3),
+                                        onTimeout: () {
+                                          return 'Connection timeout';
+                                        },
                                       );
+                                      if (res != 'Success') {
+                                        if (!mounted) return;
+                                        showSnackBar(context, res);
+                                      }
                                       setState(() {
                                         displayedUser = getUser();
                                       });
                                     },
                                     text: snapshot.data!.followers.contains(
-                                            Provider.of<UserProvider>(context)
-                                                .getUser
-                                                .uid)
+                                      Provider.of<UserProvider>(context)
+                                          .getUser
+                                          .uid,
+                                    )
                                         ? 'Unfollow'
                                         : 'Follow',
                                     width: MediaQuery.of(context).size.width *

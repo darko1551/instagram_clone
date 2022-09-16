@@ -206,6 +206,17 @@ class FirestoreMethods {
     }
   }
 
+  Future<Post> getPostById(String postId) async {
+    try {
+      final postSnapshot =
+          await _firestore.collection('posts').doc(postId).get();
+      final Post post = Post.fromSnap(postSnapshot);
+      return post;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<int> getNumberOfPosts(String uId) async {
     try {
       final snap = await _firestore
@@ -255,7 +266,7 @@ class FirestoreMethods {
     }
   }
 
-  Future<String> startFollowing(String uIdEnd, String uIdStart) async {
+  Future<String> startStopFollowing(String uIdEnd, String uIdStart) async {
     String res = '';
     try {
       user_model.User user = await _firestore
@@ -283,6 +294,7 @@ class FirestoreMethods {
           'following': FieldValue.arrayRemove([uIdEnd])
         });
       }
+      res = 'Success';
     } catch (_) {
       res = 'An error ocured';
     }

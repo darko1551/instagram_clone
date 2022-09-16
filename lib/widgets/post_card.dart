@@ -86,44 +86,7 @@ class _PostCardState extends State<PostCard> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return Dialog(
-                          child: ListView(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 16,
-                            ),
-                            shrinkWrap: true,
-                            children: ['Delete']
-                                .map(
-                                  (e) => InkWell(
-                                    onTap: () async {
-                                      String res = await FirestoreMethods()
-                                          .deletePost(post);
-                                      if (res != 'Success') {
-                                        if (!mounted) return;
-                                        showSnackBar(context, res);
-                                      }
-                                      if (!mounted) return;
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 42,
-                                        horizontal: 16,
-                                      ),
-                                      child: Text(e),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                        );
-                      },
-                    );
-                  },
+                  onPressed: () {},
                   icon: const Icon(Icons.more_vert),
                 ),
               ],

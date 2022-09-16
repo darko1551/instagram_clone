@@ -18,44 +18,35 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
-  late StreamController _streamController;
+  Stream? stream;
 
-  @override
-  void initState() {
-    _streamController = StreamController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _streamController.close();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Stream<QuerySnapshot<Map<String, dynamic>>> stream;
-
-    List<String> getFollowingList() {
-      List<String> following = [''];
-      following.addAll(Provider.of<UserProvider>(context)
+  List<String> getFollowingList() {
+    List<String> following = [''];
+    following.addAll(
+      Provider.of<UserProvider>(context)
           .getUser
           .following
           .map((e) => e.toString())
-          .toList());
-      return following;
-    }
+          .toList(),
+    );
+    return following;
+  }
 
-    _streamController.addStream(
-      FirebaseFirestore.instance
+  void resetStream() {
+    setState(() {
+      stream = FirebaseFirestore.instance
           .collection('posts')
           .where(
             'uid',
             whereIn: getFollowingList(),
           )
-          .snapshots(),
-    );
+          .snapshots();
+    });
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    resetStream();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
@@ -73,22 +64,15 @@ class _FeedScreenState extends State<FeedScreen> {
         ],
       ),
       body: StreamBuilder(
-        stream: _streamController.stream,
+        stream: stream,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.waiting) {
             return RefreshIndicator(
-              onRefresh: () async {
-                await Provider.of<UserProvider>(context).refreshUser();
+              onRefresh: () {
                 return Future.delayed(const Duration(seconds: 1), () {
-                  return _streamController.add(
-                    FirebaseFirestore.instance
-                        .collection('posts')
-                        .where(
-                          'uid',
-                          whereIn: getFollowingList(),
-                        )
-                        .snapshots(),
-                  );
+                  Provider.of<UserProvider>(context, listen: false)
+                      .refreshUser();
+                  resetStream();
                 });
               },
               child: ListView.builder(
