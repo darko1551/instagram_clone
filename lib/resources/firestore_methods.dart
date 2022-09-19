@@ -206,6 +206,18 @@ class FirestoreMethods {
     }
   }
 
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getPostByIdStream(
+    String postId,
+  ) {
+    try {
+      final postSnapshot =
+          _firestore.collection('posts').doc(postId).snapshots();
+      return postSnapshot;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Post> getPostById(String postId) async {
     try {
       final postSnapshot =
