@@ -6,6 +6,7 @@ import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_methods.dart';
 import 'package:instagram_clone/screens/comments_screen.dart';
 import 'package:instagram_clone/screens/screens.dart';
+import 'package:instagram_clone/utils/post_card_size.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
@@ -22,6 +23,16 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   bool isLikeAnimating = false;
   bool profilePictureError = false;
+  GlobalKey key = GlobalKey();
+  final PostCardSize _postCardSize = PostCardSize();
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _postCardSize.heightList.add(key.currentContext!.size!.height);
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +40,7 @@ class _PostCardState extends State<PostCard> {
     User user = Provider.of<UserProvider>(context).getUser;
 
     return Container(
+      key: key,
       color: mobileBackgroundColor,
       padding: const EdgeInsets.symmetric(
         vertical: 10,
@@ -246,8 +258,8 @@ class _PostCardState extends State<PostCard> {
                     child: StreamBuilder(
                       stream: FirestoreMethods().getComments(post.postId),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.active) {
+                        if (snapshot.connectionState !=
+                            ConnectionState.waiting) {
                           return Text(
                             'View all ${snapshot.data!.size} ${snapshot.data!.size == 1 ? 'comment' : 'comments'}',
                             style: const TextStyle(

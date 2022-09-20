@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/auth_methods.dart';
 import 'package:instagram_clone/resources/firestore_methods.dart';
+import 'package:instagram_clone/screens/edit_profile_screen.dart';
 import 'package:instagram_clone/utils/utils.dart';
 import 'package:instagram_clone/widgets/aligned_image_grid.dart';
 import 'package:instagram_clone/widgets/button.dart';
@@ -132,6 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   width: double.infinity,
                                   height: double.infinity,
                                   snapshot.data!.photoUrl,
+                                  filterQuality: FilterQuality.none,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
                                     return Image.asset(
@@ -248,7 +250,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ],
                               )
                             : Button(
-                                function: () {},
+                                function: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const EditProfileScreen(),
+                                    ),
+                                  );
+                                },
                                 text: 'Edit profile',
                                 width: double.infinity,
                               ),

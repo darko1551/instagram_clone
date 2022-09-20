@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:instagram_clone/models/post.dart';
 import 'package:instagram_clone/resources/firestore_methods.dart';
 import 'package:instagram_clone/resources/image_overlay_actions.dart';
+import 'package:instagram_clone/screens/profile_feed_screen.dart';
 import 'package:instagram_clone/utils/delete_post.dart';
 import 'package:instagram_clone/utils/enum_overlay_actions.dart';
 
@@ -100,6 +101,11 @@ class _AlignedImageGridState extends State<AlignedImageGrid> {
             Padding(
               padding: const EdgeInsets.only(bottom: 2.0),
               child: GestureDetector(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ProfileFeedScreen(index: index * 3),
+                  ),
+                ),
                 onLongPress: () => overlayActions.imageOverlay.showImageOverlay(
                   context,
                   _posts[index * 3].postId,
@@ -147,6 +153,12 @@ class _AlignedImageGridState extends State<AlignedImageGrid> {
               padding: const EdgeInsets.only(bottom: 2.0),
               child: _posts.length > (index * 3 + 1)
                   ? GestureDetector(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProfileFeedScreen(index: index * 3 + 1),
+                        ),
+                      ),
                       onLongPress: () =>
                           overlayActions.imageOverlay.showImageOverlay(
                         context,
@@ -201,6 +213,12 @@ class _AlignedImageGridState extends State<AlignedImageGrid> {
               padding: const EdgeInsets.only(bottom: 2.0),
               child: _posts.length > (index * 3 + 2)
                   ? GestureDetector(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProfileFeedScreen(index: index * 3 + 2),
+                        ),
+                      ),
                       onDoubleTap: () => DeletePost().deletePostDialog(
                         context,
                         _posts[index * 3 + 2].postId,

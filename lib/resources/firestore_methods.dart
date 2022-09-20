@@ -250,7 +250,7 @@ class FirestoreMethods {
       final snapshot = await _firestore
           .collection('posts')
           .where('uid', isEqualTo: uId)
-          .orderBy('datePublished')
+          .orderBy('datePublished', descending: true)
           .limit(limit)
           .get();
       return snapshot;
@@ -268,7 +268,7 @@ class FirestoreMethods {
       final snapshot = await _firestore
           .collection('posts')
           .where('uid', isEqualTo: uId)
-          .orderBy('datePublished')
+          .orderBy('datePublished', descending: true)
           .startAfter([lastDocument['datePublished']])
           .limit(limit)
           .get();
@@ -309,6 +309,50 @@ class FirestoreMethods {
       res = 'Success';
     } catch (_) {
       res = 'An error ocured';
+    }
+    return res;
+  }
+
+  Future<String> updateProfileImage(
+    Uint8List image,
+    String userId,
+  ) async {
+    String res = '';
+    try {
+      String pictureUrl = await StorageMethods()
+          .upoladImageToStorage('profilePictures', image, false);
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .update({'photoUrl': pictureUrl});
+      res = 'Success';
+    } catch (e) {
+      res = 'An error occured';
+    }
+    return res;
+  }
+
+  Future<String> updateUsername(String newUsername, String userId) async {
+    String res = '';
+    try {
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .update({'username': newUsername});
+      res = 'Success';
+    } catch (e) {
+      res = 'An error occured';
+    }
+    return res;
+  }
+
+  Future<String> updateBio(String newBio, String userId) async {
+    String res = '';
+    try {
+      await _firestore.collection('users').doc(userId).update({'bio': newBio});
+      res = 'Success';
+    } catch (e) {
+      res = 'An error occured';
     }
     return res;
   }

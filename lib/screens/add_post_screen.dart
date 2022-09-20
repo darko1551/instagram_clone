@@ -103,6 +103,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     user.username,
                     user.photoUrl,
                   );
+                  _descriptionController.text = '';
                 },
                 child: const Text(
                   'Post',
