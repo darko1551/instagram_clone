@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:instagram_clone/models/user.dart';
 
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:instagram_clone/widgets/post_card.dart';
@@ -22,13 +23,16 @@ class _FeedScreenState extends State<FeedScreen> {
 
   List<String> getFollowingList() {
     List<String> following = [''];
-    following.addAll(
-      Provider.of<UserProvider>(context)
-          .getUser
-          .following
-          .map((e) => e.toString())
-          .toList(),
-    );
+    try {
+      following.addAll(
+        Provider.of<UserProvider>(context)
+            .getUser
+            .following
+            .map((e) => e.toString())
+            .toList(),
+      );
+    } catch (e) {}
+
     return following;
   }
 
